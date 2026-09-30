@@ -74,4 +74,63 @@ void LCD_Task(void) {
 
 ```
 
-Para darte el código exacto de inicialización, ¿estás utilizando un módulo adaptador I2C soldado al display, o vas a conectar los pines de datos directamente a los puertos GPIO del microcontrolador?
+El código fuente proporcionado implementa un sistema embebido "Bare Metal" basado en tareas disparadas por eventos (Event-Triggered System), diseñado para gestionar de forma concurrente y no bloqueante la lógica de pruebas y la actualización física de una pantalla LCD.
+
+## Arquitectura del Sistema y Módulos
+
+* **app.c y app_it.c**: Constituyen el núcleo del sistema de tareas. `app.c` inicializa las tareas y contiene el bucle principal (`app_update`), el cual ejecuta las funciones `update` de cada tarea y calcula sus métricas de rendimiento (como los tiempos de ejecución en el mejor y peor caso). `app_it.c` gestiona las rutinas de servicio de interrupción (ISR), incrementando los contadores de tiempo del sistema a través de las interrupciones del SysTick.
+
+
+* **systick.c**: Proporciona funciones de temporización del hardware central, específicamente un retardo bloqueante en microsegundos (`systick_delay_us`) utilizando el contador del timer SysTick del microcontrolador.
+
+
+* **task_test.c y task_test_attribute.h**: Implementan una tarea de prueba periódica. Mantienen configuraciones y variables de estado interno (como un temporizador `tick` y un contador general de ciclos) para generar datos y enviarlos hacia la tarea de la pantalla.
+
+
+* **task_display_attribute.h**: Define las enumeraciones de estados (`ST_DSP_IDLE`, `ST_DSP_UPDATE`), eventos (`EV_DSP_IDLE`, `EV_DSP_UPDATE`), y la estructura de datos `task_display_dta_t`, que incluye una matriz `ddram` que funciona como buffer para 2 filas de 16 caracteres.
+
+
+* **task_display_interface.c y task_display_interface.h**: Actúan como el puente de comunicación (API) entre cualquier tarea emisora y la tarea de visualización. Exponen la función `put_event_task_display`, que inyecta caracteres en la matriz `ddram` y activa la bandera (`flag`) indicando que hay una actualización pendiente.
+
+
+* **task_display.c**: Inicializa y ejecuta la tarea de control general de la pantalla, manteniendo instanciada la estructura de datos principal y evaluando cuándo actualizar el hardware.
+
+
+* **display.c y display.h**: Representan el controlador de bajo nivel de hardware (driver) para una pantalla LCD compatible con el controlador HD44780. Manejan las secuencias de pulsos en los pines GPIO, configurando la comunicación en 4 u 8 bits y enviando comandos o caracteres individuales.
+
+
+
+## Comportamiento de `task_test_statechart(void)`
+
+Esta función actúa como el núcleo lógico de la tarea de prueba y opera en base a decrementos de tiempo:
+
+* En cada ejecución, incrementa la variable `counter`, la cual registra el total de ciclos de actualización de la tarea.
+
+
+* Comprueba una variable temporizadora interna (`tick`). Si es mayor a su valor mínimo (`DEL_TEST_XX_MIN`), la decrementa.
+
+
+* Cuando el temporizador se agota, se reinicia asignándole su valor máximo (`DEL_TEST_XX_MAX`).
+
+
+* Inmediatamente después del reinicio, utiliza la función `put_event_task_display` para enviar la cadena base "Test Nro: ******" a la fila 1 de la pantalla.
+
+
+* Calcula el número de prueba en curso dividiendo el `counter` total entre `DEL_TEST_XX_MAX`, lo formatea a una cadena de texto usando `snprintf`, y lo inyecta dinámicamente en la columna 10, fila 1 de la pantalla.
+
+
+
+## Comportamiento de `task_display_statechart(void)`
+
+Esta función implementa una Máquina de Estados Finitos (FSM) no bloqueante diseñada para volcar la memoria RAM interna hacia el hardware de la pantalla sin detener la ejecución del resto del sistema. Opera de la siguiente manera:
+
+* **Estado ST_DSP_IDLE (Reposo)**: La tarea monitorea permanentemente las variables de control. Si detecta que la variable booleana `flag` es verdadera (`true`) y el evento actual es igual a `EV_DSP_UPDATE`, realiza una transición de estado hacia `ST_DSP_UPDATE`.
+
+
+* **Estado ST_DSP_UPDATE (Actualización)**: Se encarga del refresco físico de los caracteres. Primero, apaga la bandera (`flag = false`). Luego, posiciona el cursor físico del hardware en la coordenada de inicio de la primera fila y escribe secuencialmente la información almacenada en el índice 0 del buffer `ddram`.
+
+
+* A continuación, mueve el cursor al inicio de la segunda fila y repite el proceso volcando el contenido del índice 1 del buffer `ddram`. Una vez completada la transmisión a ambas filas, el sistema retorna automáticamente al estado `ST_DSP_IDLE`.
+
+
+* **Condición por defecto**: Si ocurre una desincronización y la máquina entra en un estado no reconocido, restablece de manera segura el evento a `EV_DSP_IDLE`, el estado a `ST_DSP_IDLE`, el retardo a `DEL_DSP_MIN` y limpia la bandera de eventos.
