@@ -134,3 +134,8 @@ Esta función implementa una Máquina de Estados Finitos (FSM) no bloqueante dis
 
 
 * **Condición por defecto**: Si ocurre una desincronización y la máquina entra en un estado no reconocido, restablece de manera segura el evento a `EV_DSP_IDLE`, el estado a `ST_DSP_IDLE`, el retardo a `DEL_DSP_MIN` y limpia la bandera de eventos.
+
+
+Tarea,Índice,NOE (Ejecuciones),LET (µs),BCET (µs),WCET (µs)
+task_test,task_dta_list[0],278373,2,2,37
+task_display,task_dta_list[1],278375,2,2,6207
