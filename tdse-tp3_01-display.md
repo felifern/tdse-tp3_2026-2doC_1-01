@@ -135,7 +135,20 @@ Esta función implementa una Máquina de Estados Finitos (FSM) no bloqueante dis
 
 * **Condición por defecto**: Si ocurre una desincronización y la máquina entra en un estado no reconocido, restablece de manera segura el evento a `EV_DSP_IDLE`, el estado a `ST_DSP_IDLE`, el retardo a `DEL_DSP_MIN` y limpia la bandera de eventos.
 
+### Registro de Métricas - Actividad 01
 
-Tarea,Índice,NOE (Ejecuciones),LET (µs),BCET (µs),WCET (µs)
-task_test,task_dta_list[0],278373,2,2,37
-task_display,task_dta_list[1],278375,2,2,6207
+| Tarea | Índice | NOE (Ejecuciones) | LET (µs) | BCET (µs) | WCET (µs) |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| `task_test` | `task_dta_list[0]` | 278373 | 2 | 2 | 37 |
+| `task_display` | `task_dta_list[1]` | 278375 | 2 | 2 | 6207 |
+
+**Análisis de restricciones temporales del ejecutor cíclico:**
+
+El período del sistema (Tick) está configurado en 1 milisegundo, lo que equivale a 1000 microsegundos[cite: 1]. 
+
+Para que el sistema cumpla con las restricciones temporales del ejecutor cíclico, la suma del Tiempo de Ejecución en el Peor de los Casos (WCET) de todas las tareas debe ser menor o igual al período del sistema (WCET total <= Período). 
+
+En este caso particular:
+WCET total = 37 µs + 6207 µs = 6244 µs[cite: 27]
+
+Como **6244 µs > 1000 µs**, el sistema **no cumple** con las restricciones temporales[cite: 1, 27]. Esto ocurre porque el código de la pantalla utiliza demoras bloqueantes (`systick_delay_us` y `HAL_Delay`) que detienen el procesador, extendiendo excesivamente el tiempo de ejecución de la tarea[cite: 11, 27].
