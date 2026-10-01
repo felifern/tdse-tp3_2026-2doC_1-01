@@ -3,16 +3,16 @@
 ### Valores medidos en `task_dta_list` (Unidad: us)
 
 - **task_dta_list[0] (task_test):**
-  - NOE: 11221[cite: 18]
-  - LET: 2 us[cite: 18]
-  - BCET: 2 us[cite: 18]
-  - WCET: 36 us[cite: 18]
+  - NOE: 11221
+  - LET: 2 us
+  - BCET: 2 us
+  - WCET: 36 us
 
 - **task_dta_list[1] (task_display):**
-  - NOE: 11225[cite: 18]
-  - LET: 2 us[cite: 18]
-  - BCET: 2 us[cite: 18]
-  - WCET: 221 us[cite: 18]
+  - NOE: 11225
+  - LET: 2 us
+  - BCET: 2 us
+  - WCET: 221 us
 
 ### Justificación y Cumplimiento de Restricciones
 El tiempo del peor caso global ($\text{WCET}_{\text{total}}$) dentro del ejecutor cíclico se calcula como la suma de los peores tiempos de ejecución individuales de todas las tareas configuradas en el sistema:
