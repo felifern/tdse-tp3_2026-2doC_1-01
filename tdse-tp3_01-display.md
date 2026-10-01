@@ -17,7 +17,7 @@ El modelo básico de estados debería incluir:
 * **`POWER_ON_DELAY`**: Al encender el sistema, el estado inicial simplemente espera entre 40ms y 50ms para permitir que el voltaje del display se estabilice antes de recibir comandos.
 * **`INIT_SEQUENCE`**: Ejecuta los comandos rígidos de configuración (por ejemplo, enviar el comando `0x03` tres veces seguido de `0x02` para forzar el modo de 4 bits, seguido de la configuración de líneas y fuente).
 * **`IDLE`**: El estado de reposo. El sistema monitorea continuamente si hay nuevos caracteres o comandos en el buffer de transmisión listos para ser enviados.
-* **`WRITE_NIBBLE_HIGH` / `WRITE_NIBBLE_LOW**`: Si usas un bus de 4 bits, enviar un byte requiere dos ciclos. Estos estados preparan los primeros 4 bits en las salidas, generan el pulso en el pin EN, y luego repiten el proceso para los 4 bits restantes.
+* **`WRITE_NIBBLE_HIGH` / `WRITE_NIBBLE_LOW`**: Si usas un bus de 4 bits, enviar un byte requiere dos ciclos. Estos estados preparan los primeros 4 bits en las salidas, generan el pulso en el pin EN, y luego repiten el proceso para los 4 bits restantes.
 * **`WAIT_BUSY`**: Tras enviar un comando, el sistema ingresa a este estado durante un tiempo predeterminado (ej. 2ms para el comando *Clear Display* o 50µs para caracteres normales) o consultando el *Busy Flag* del LCD si el pin R/W está conectado.
 
 ## 3. C Coding (Implementación y Porting)
