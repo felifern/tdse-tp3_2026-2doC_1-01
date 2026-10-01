@@ -17,7 +17,7 @@
 ### Justificación y Cumplimiento de Restricciones
 El tiempo del peor caso global ($\text{WCET}_{\text{total}}$) dentro del ejecutor cíclico se calcula como la suma de los peores tiempos de ejecución individuales de todas las tareas configuradas en el sistema:
 
-$\text{WCET}_{\text{total}} = \text{WCET}_{\text{task\_test}} + \text{WCET}_{\text{task\_display}} = 36\,\mu\text{s} + 221\,\mu\text{s} = 257\,\mu\text{s}$
+`WCET_total` = `WCET_task_test` + `WCET_task_display` = 36 µs + 221 µs = 257 µs
 
 El ejecutor cíclico opera con una ventana de tiempo o slot temporal de $1\text{ ms}$ ($1000\,\mu\text{s}$). Como el peor escenario de ejecución consumirá $257\,\mu\text{s}$, se cumple que:
 
