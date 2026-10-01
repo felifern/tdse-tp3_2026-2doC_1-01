@@ -3,16 +3,24 @@
 ### Valores medidos en `task_dta_list` (Unidad: us)
 
 - **task_dta_list[0] (task_test):**
-  - NOE: 11221
-  - LET: 2 us
-  - BCET: 2 us
-  - WCET: 36 us
+  - NOE: 11221[cite: 18]
+  - LET: 2 us[cite: 18]
+  - BCET: 2 us[cite: 18]
+  - WCET: 36 us[cite: 18]
 
 - **task_dta_list[1] (task_display):**
-  - NOE: 11225
-  - LET: 2 us
-  - BCET: 2 us
-  - WCET: 221 us
+  - NOE: 11225[cite: 18]
+  - LET: 2 us[cite: 18]
+  - BCET: 2 us[cite: 18]
+  - WCET: 221 us[cite: 18]
 
-### Justificación
-El tiempo máximo de ejecución de la tarea del display (WCET = 221 us) es significativamente menor al período del ejecutor cíclico (1000 us / 1 ms). La implementación mediante diagrama de estados garantiza un código no bloqueante al procesar un único dato/instrucción por ciclo, cumpliendo holgadamente con las restricciones temporales del sistema embebido.
+### Justificación y Cumplimiento de Restricciones
+El tiempo del peor caso global ($\text{WCET}_{\text{total}}$) dentro del ejecutor cíclico se calcula como la suma de los peores tiempos de ejecución individuales de todas las tareas configuradas en el sistema:
+
+$$\text{WCET}_{\text{total}} = \text{WCET}_{\text{task\_test}} + \text{WCET}_{\text{task\_display}} = 36\,\mu\text{s} + 221\,\mu\text{s} = 257\,\mu\text{s}$$
+
+El ejecutor cíclico opera con una ventana de tiempo o slot temporal de $1\text{ ms}$ ($1000\,\mu\text{s}$)[cite: 7]. Como el peor escenario de ejecución consumirá $257\,\mu\text{s}$, se cumple que:
+
+$$\text{WCET}_{\text{total}} < 1000\,\mu\text{s}$$
+
+Esto representa un uso máximo del procesador del $25,7\%$ en el peor momento posible. La implementación del diagrama de estados procesando $1$ sola instrucción o dato por ciclo es no bloqueante[cite: 7, 8], liberando la CPU a tiempo para garantizar el cumplimiento de todas las restricciones temporales del ejecutor cíclico[cite: 7].
