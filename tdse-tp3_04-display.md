@@ -2,34 +2,10 @@
 
 | Tarea (`task_dta_list[index]`) | `NOE` (Número de Ejecuciones) | `LET` (Último Tiempo) | `BCET` (Mejor Tiempo) | `WCET` (Peor Tiempo) |
 | --- | --- | --- | --- | --- |
-| **`task_dta_list[0]`**<br> | 371433
-
- | 12
-
- | 12
-
- | **14**<br> |
-| **`task_dta_list[1]`**<br> | 371436
-
- | 3
-
- | 3
-
- | **152**<br> |
-| **`task_dta_list[2]`**<br> | 371441
-
- | 3
-
- | 2
-
- | **4**<br> |
-| **`task_dta_list[3]`**<br> | 371445
-
- | 2
-
- | 2
-
- | **78**<br> |
+| **`task_dta_list[0]`**<br> | 371433| 12| 12| **14**<br> |
+| **`task_dta_list[1]`**<br> | 371436| 3| 3| **152**<br> |
+| **`task_dta_list[2]`**<br> | 371441| 3| 2| **4**<br> |
+| **`task_dta_list[3]`**<br> | 371445| 2| 2| **78**<br> |
 
 ---
 
